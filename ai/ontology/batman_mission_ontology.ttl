@@ -1,0 +1,274 @@
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix bat:  <http://batman.defence.in/ontology#> .
+
+# ============================================================
+# BATMAN Mission Ontology — OWL 2 (Turtle format)
+# v1.0 — Phase 0 Foundation
+# Classification: UNCLASSIFIED — Research/Academic
+# ============================================================
+
+bat: a owl:Ontology ;
+    rdfs:label "BATMAN Mission Ontology" ;
+    rdfs:comment "Core ontology for the Battlefield Analytics & Tactical Mission Assistance Network" ;
+    owl:versionInfo "1.0" .
+
+# ── MILITARY OPERATIONS ───────────────────────────────────────────────────────
+
+bat:MilitaryOperation a owl:Class ;
+    rdfs:label "Military Operation" ;
+    rdfs:comment "Top-level class for all military operations." .
+
+bat:ConventionalOperation a owl:Class ;
+    rdfs:subClassOf bat:MilitaryOperation ;
+    rdfs:label "Conventional Operation" .
+
+bat:BorderDefenceOp a owl:Class ;
+    rdfs:subClassOf bat:ConventionalOperation ;
+    rdfs:label "Border Defence Operation" .
+
+bat:FireSupportOp a owl:Class ;
+    rdfs:subClassOf bat:ConventionalOperation ;
+    rdfs:label "Fire Support Operation" .
+
+bat:SubConventionalOperation a owl:Class ;
+    rdfs:subClassOf bat:MilitaryOperation ;
+    rdfs:label "Sub-conventional Operation" .
+
+bat:CounterInsurgencyOp a owl:Class ;
+    rdfs:subClassOf bat:SubConventionalOperation ;
+    rdfs:label "Counter-Insurgency Operation" .
+
+bat:CounterTerrorismOp a owl:Class ;
+    rdfs:subClassOf bat:SubConventionalOperation ;
+    rdfs:label "Counter-Terrorism Operation" .
+
+bat:CounterInfiltrationOp a owl:Class ;
+    rdfs:subClassOf bat:SubConventionalOperation ;
+    rdfs:label "Counter-Infiltration Operation" .
+
+bat:SpecialOpsOp a owl:Class ;
+    rdfs:subClassOf bat:SubConventionalOperation ;
+    rdfs:label "Special Operations" .
+
+bat:HostageRescueOp a owl:Class ;
+    rdfs:subClassOf bat:SpecialOpsOp ;
+    rdfs:label "Hostage Rescue Operation" .
+
+bat:DeepReconOp a owl:Class ;
+    rdfs:subClassOf bat:SpecialOpsOp ;
+    rdfs:label "Deep Reconnaissance Operation" .
+
+bat:HADROperation a owl:Class ;
+    rdfs:subClassOf bat:MilitaryOperation ;
+    rdfs:label "Humanitarian Assistance / Disaster Relief Operation" .
+
+bat:FloodReliefOp a owl:Class ;
+    rdfs:subClassOf bat:HADROperation ;
+    rdfs:label "Flood Relief Operation" .
+
+bat:EarthquakeResponseOp a owl:Class ;
+    rdfs:subClassOf bat:HADROperation ;
+    rdfs:label "Earthquake Response Operation" .
+
+bat:ConvoyProtectionOp a owl:Class ;
+    rdfs:subClassOf bat:MilitaryOperation ;
+    rdfs:label "Convoy Protection Operation" .
+
+bat:HighAltitudeLogisticsOp a owl:Class ;
+    rdfs:subClassOf bat:MilitaryOperation ;
+    rdfs:label "High Altitude Logistics Operation" .
+
+# ── MILITARY UNITS ────────────────────────────────────────────────────────────
+
+bat:MilitaryUnit a owl:Class ;
+    rdfs:label "Military Unit" .
+
+bat:Infantry a owl:Class ;
+    rdfs:subClassOf bat:MilitaryUnit ;
+    rdfs:label "Infantry Unit" .
+
+bat:RashtriyaRifles a owl:Class ;
+    rdfs:subClassOf bat:Infantry ;
+    rdfs:label "Rashtriya Rifles Unit" .
+
+bat:PARA_SF a owl:Class ;
+    rdfs:subClassOf bat:Infantry ;
+    rdfs:label "PARA Special Forces" .
+
+bat:Ghatak a owl:Class ;
+    rdfs:subClassOf bat:Infantry ;
+    rdfs:label "Ghatak Platoon" .
+
+bat:QuickReactionTeam a owl:Class ;
+    rdfs:subClassOf bat:Infantry ;
+    rdfs:label "Quick Reaction Team" .
+
+bat:Armour a owl:Class ;
+    rdfs:subClassOf bat:MilitaryUnit ;
+    rdfs:label "Armoured Unit" .
+
+bat:Artillery a owl:Class ;
+    rdfs:subClassOf bat:MilitaryUnit ;
+    rdfs:label "Artillery Unit" .
+
+bat:Aviation a owl:Class ;
+    rdfs:subClassOf bat:MilitaryUnit ;
+    rdfs:label "Aviation Unit" .
+
+bat:ALH_Dhruv a owl:Class ;
+    rdfs:subClassOf bat:Aviation ;
+    rdfs:label "ALH Dhruv Helicopter" ;
+    rdfs:comment "Advanced Light Helicopter — ceiling approx 7,000m MSL" .
+
+bat:Chetak a owl:Class ;
+    rdfs:subClassOf bat:Aviation ;
+    rdfs:label "Chetak Helicopter" .
+
+bat:SupportUnit a owl:Class ;
+    rdfs:subClassOf bat:MilitaryUnit ;
+    rdfs:label "Support Unit" .
+
+bat:Engineers a owl:Class ;
+    rdfs:subClassOf bat:SupportUnit ;
+    rdfs:label "Engineer Unit" .
+
+bat:Signals a owl:Class ;
+    rdfs:subClassOf bat:SupportUnit ;
+    rdfs:label "Signals Unit" .
+
+bat:Medical a owl:Class ;
+    rdfs:subClassOf bat:SupportUnit ;
+    rdfs:label "Medical Unit" .
+
+# ── TERRAIN ───────────────────────────────────────────────────────────────────
+
+bat:TerrainType a owl:Class ;
+    rdfs:label "Terrain Type" .
+
+bat:HimalayanTerrain a owl:Class ;
+    rdfs:subClassOf bat:TerrainType ;
+    rdfs:label "Himalayan Terrain" .
+
+bat:HighAltitudeTerrain a owl:Class ;
+    rdfs:subClassOf bat:HimalayanTerrain ;
+    rdfs:label "High Altitude Terrain (>4000m)" .
+
+bat:SubAlpineTerrain a owl:Class ;
+    rdfs:subClassOf bat:HimalayanTerrain ;
+    rdfs:label "Sub-Alpine Terrain" .
+
+bat:PlainsTerrain a owl:Class ;
+    rdfs:subClassOf bat:TerrainType ;
+    rdfs:label "Plains Terrain" .
+
+bat:UrbanTerrain a owl:Class ;
+    rdfs:subClassOf bat:TerrainType ;
+    rdfs:label "Urban Terrain" .
+
+bat:RiparianTerrain a owl:Class ;
+    rdfs:subClassOf bat:TerrainType ;
+    rdfs:label "Riparian (River) Terrain" .
+
+bat:ForestTerrain a owl:Class ;
+    rdfs:subClassOf bat:TerrainType ;
+    rdfs:label "Dense Forested Terrain" .
+
+# ── THREAT ENTITIES ───────────────────────────────────────────────────────────
+
+bat:ThreatEntity a owl:Class ;
+    rdfs:label "Threat Entity" .
+
+bat:AsymmetricThreat a owl:Class ;
+    rdfs:subClassOf bat:ThreatEntity ;
+    rdfs:label "Asymmetric Threat" .
+
+bat:Infiltrator a owl:Class ;
+    rdfs:subClassOf bat:AsymmetricThreat ;
+    rdfs:label "Cross-Border Infiltrator" .
+
+bat:IED a owl:Class ;
+    rdfs:subClassOf bat:AsymmetricThreat ;
+    rdfs:label "Improvised Explosive Device" .
+
+bat:TerroristGroup a owl:Class ;
+    rdfs:subClassOf bat:AsymmetricThreat ;
+    rdfs:label "Terrorist Group" .
+
+bat:EmergingThreat a owl:Class ;
+    rdfs:subClassOf bat:ThreatEntity ;
+    rdfs:label "Emerging / Technology Threat" .
+
+bat:UAS a owl:Class ;
+    rdfs:subClassOf bat:EmergingThreat ;
+    rdfs:label "Unmanned Aerial System" .
+
+bat:ReconUAV a owl:Class ;
+    rdfs:subClassOf bat:UAS ;
+    rdfs:label "Reconnaissance UAV" .
+
+bat:DroneSwarm a owl:Class ;
+    rdfs:subClassOf bat:UAS ;
+    rdfs:label "Drone Swarm" .
+
+bat:LoiteringMunition a owl:Class ;
+    rdfs:subClassOf bat:UAS ;
+    rdfs:label "Loitering Munition" .
+
+bat:EWThreat a owl:Class ;
+    rdfs:subClassOf bat:EmergingThreat ;
+    rdfs:label "Electronic Warfare Threat" .
+
+bat:CyberThreat a owl:Class ;
+    rdfs:subClassOf bat:EmergingThreat ;
+    rdfs:label "Cyber Threat" .
+
+# ── OBJECT PROPERTIES ────────────────────────────────────────────────────────
+
+bat:hasObjective a owl:ObjectProperty ;
+    rdfs:domain bat:MilitaryOperation ;
+    rdfs:range bat:MilitaryObjective ;
+    rdfs:label "has objective" .
+
+bat:assignedTo a owl:ObjectProperty ;
+    rdfs:domain bat:MilitaryUnit ;
+    rdfs:range bat:MilitaryOperation ;
+    rdfs:label "assigned to" .
+
+bat:threatens a owl:ObjectProperty ;
+    rdfs:domain bat:ThreatEntity ;
+    rdfs:range bat:MilitaryUnit ;
+    rdfs:label "threatens" .
+
+bat:locatedIn a owl:ObjectProperty ;
+    rdfs:domain bat:ThreatEntity ;
+    rdfs:range bat:TerrainType ;
+    rdfs:label "located in" .
+
+bat:suitableFor a owl:ObjectProperty ;
+    rdfs:domain bat:MilitaryUnit ;
+    rdfs:range bat:TerrainType ;
+    rdfs:label "suitable for terrain" .
+
+# ── DATATYPE PROPERTIES ───────────────────────────────────────────────────────
+
+bat:hasProbability a owl:DatatypeProperty ;
+    rdfs:range xsd:float ;
+    rdfs:label "has probability" .
+
+bat:hasAltitudeLimit a owl:DatatypeProperty ;
+    rdfs:domain bat:Aviation ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has altitude limit (metres MSL)" .
+
+bat:hasRiskScore a owl:DatatypeProperty ;
+    rdfs:range xsd:float ;
+    rdfs:label "has risk score [0..10]" .
+
+# ── INDIVIDUALS: Platform Constraints ─────────────────────────────────────────
+
+bat:ALH_Dhruv_Instance a bat:ALH_Dhruv ;
+    bat:hasAltitudeLimit 7000 ;
+    rdfs:label "ALH Dhruv (operational ceiling 7000m)" .

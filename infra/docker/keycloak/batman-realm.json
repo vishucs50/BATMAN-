@@ -1,0 +1,62 @@
+{
+  "realm": "batman",
+  "displayName": "BATMAN Command System",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": false,
+  "defaultSignatureAlgorithm": "RS256",
+  "accessTokenLifespan": 3600,
+  "clients": [
+    {
+      "clientId": "batman-frontend",
+      "name": "BATMAN Frontend",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:3000"],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false
+    },
+    {
+      "clientId": "batman-gateway",
+      "name": "BATMAN API Gateway",
+      "enabled": true,
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "secret": "batman-gateway-secret-dev"
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "COMMANDING_OFFICER",  "description": "Full access: view, what-if, edit, approve, admin" },
+      { "name": "OPS_OFFICER",         "description": "View, what-if, edit, approve COAs" },
+      { "name": "INTELLIGENCE_OFFICER","description": "View and edit intel/threat data" },
+      { "name": "LOGISTICS_OFFICER",   "description": "View and edit logistics data" },
+      { "name": "BATMAN_OPERATOR",     "description": "System admin, no operational approval" }
+    ]
+  },
+  "users": [
+    {
+      "username": "co_demo",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "demo1234", "temporary": false }],
+      "realmRoles": ["COMMANDING_OFFICER"],
+      "attributes": { "rank": ["Colonel"], "unit": ["21 RR"] }
+    },
+    {
+      "username": "ops_demo",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "demo1234", "temporary": false }],
+      "realmRoles": ["OPS_OFFICER"],
+      "attributes": { "rank": ["Major"], "unit": ["21 RR"] }
+    },
+    {
+      "username": "intel_demo",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "demo1234", "temporary": false }],
+      "realmRoles": ["INTELLIGENCE_OFFICER"],
+      "attributes": { "rank": ["Captain"], "unit": ["21 RR"] }
+    }
+  ]
+}

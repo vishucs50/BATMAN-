@@ -1,0 +1,278 @@
+# BATMAN Threat Library — Phase 0 Seed Data
+# YAML format — T-01 through T-12 from Architecture Document
+# Classification: UNCLASSIFIED — Academic/Research
+
+threats:
+
+  - id: T-01
+    name: "Cross-Border Infiltration"
+    category: INFILTRATION
+    indicators:
+      - type: SENSOR
+        description: "IB/LOC sensor tripwire activation"
+        weight: 0.4
+      - type: PATROL_CONTACT
+        description: "Physical patrol contact"
+        weight: 0.5
+      - type: HUMINT
+        description: "Human intelligence report"
+        weight: 0.3
+      - type: UAV_SIGHTING
+        description: "UAV visual confirmation"
+        weight: 0.45
+    behaviour_model:
+      agent_type: INFILTRATOR
+      speed_kmh: {min: 2, max: 8, distribution: "uniform"}
+      group_size: {min: 3, max: 15, distribution: "poisson", lambda: 5}
+      route_preference: HIGH_COVER_TERRAIN
+      night_preference: true
+    risk_formula: "P(detection_failure) * P(escape) * group_size * threat_level"
+    countermeasures:
+      - QRT_DEPLOYMENT
+      - AERIAL_SURVEILLANCE
+      - CORDON_ESTABLISHMENT
+      - TRACKER_TEAM
+    seasonal_factors:
+      WINTER: 1.3   # snow reduces tracks visibility
+      MONSOON: 0.8  # flooding limits routes
+      SUMMER: 1.0
+
+  - id: T-02
+    name: "UAV Reconnaissance"
+    category: UAV_RECON
+    indicators:
+      - type: RADAR
+        description: "Radar contact — slow, low"
+        weight: 0.6
+      - type: ACOUSTIC
+        description: "Acoustic signature match"
+        weight: 0.35
+      - type: RF_FREQUENCY
+        description: "RF frequency fingerprint match"
+        weight: 0.5
+    behaviour_model:
+      agent_type: UAV
+      altitude_m: {min: 50, max: 500}
+      speed_kmh: {min: 20, max: 120}
+      loiter_pattern: CIRCULAR_ORBIT
+    risk_score_drivers:
+      - UAV_TYPE_CAPABILITY
+      - LOITER_TIME_OVER_AOR
+      - DATA_RELAY_CAPABILITY
+    countermeasures:
+      - COUNTER_OPSEC_MEASURES
+      - POSITION_DISPERSION
+      - DECEPTION_DECOYS
+      - REPORT_TO_HIGHER
+
+  - id: T-03
+    name: "Drone Swarm Attack"
+    category: DRONE_SWARM
+    indicators:
+      - type: RF_CLUSTER
+        description: "Multiple coordinated RF emissions"
+        weight: 0.7
+      - type: RADAR_MULTI_TRACK
+        description: "Multiple simultaneous radar contacts"
+        weight: 0.75
+      - type: ACOUSTIC_BURST
+        description: "Multiple acoustic signatures"
+        weight: 0.5
+    behaviour_model:
+      agent_type: DRONE_SWARM
+      swarm_size: {min: 5, max: 50}
+      coordination: DISTRIBUTED
+      payload_type: UNKNOWN  # worst case assumption
+    risk_score_drivers:
+      - SWARM_SIZE
+      - PAYLOAD_TYPE
+      - COORDINATION_LEVEL
+      - DISTANCE_FROM_HVA
+    countermeasures:
+      - ACTIVATE_COUNTER_DRONE
+      - RESTRICT_HELICOPTER_OPS
+      - DISPERSE_HIGH_VALUE_ASSETS
+      - SHORAD_ACTIVATION
+
+  - id: T-04
+    name: "Loitering Munition"
+    category: LOITERING_MUNITION
+    indicators:
+      - type: RADAR
+        description: "Slow radar contact — characteristic signature"
+        weight: 0.65
+      - type: ACOUSTIC
+        description: "Characteristic propulsion acoustic pattern"
+        weight: 0.5
+      - type: RF_EMISSION
+        description: "Control link RF emission"
+        weight: 0.6
+    behaviour_model:
+      agent_type: LOITERING_MUNITION
+      endurance_min: {min: 30, max: 120}
+      target_discrimination: MEDIUM
+    countermeasures:
+      - ROUTE_VEHICLES_UNDER_COVER
+      - DISPERSE_LOGISTICS
+      - MOVE_HQ_ELEMENTS
+      - HARD_KILL_INTERCEPT
+
+  - id: T-05
+    name: "Electronic Warfare / Jamming"
+    category: EW_JAMMING
+    indicators:
+      - type: COMMS_DEGRADATION
+        description: "Sudden communications quality degradation"
+        weight: 0.8
+      - type: GPS_DRIFT
+        description: "GPS solution drift or loss"
+        weight: 0.7
+      - type: BER_INCREASE
+        description: "Bit error rate increase on data links"
+        weight: 0.65
+    behaviour_model:
+      agent_type: EW_SYSTEM
+      jamming_type: BROADBAND
+      affected_bands: [VHF, UHF, GPS_L1, GPS_L2]
+    planning_effects:
+      - SWITCH_TO_EMCON_PLAN
+      - ACTIVATE_HF_SATELLITE_COMMS
+      - INCREASE_COORDINATION_LATENCY
+    countermeasures:
+      - FREQUENCY_HOPPING
+      - PREPLANNED_CODE_WORDS
+      - SATELLITE_COMMS_BACKUP
+
+  - id: T-06
+    name: "GPS Degradation / Spoofing"
+    category: GPS_DENIAL
+    indicators:
+      - type: GPS_SOLUTION_DRIFT
+        description: "GPS position drift exceeding 50m"
+        weight: 0.9
+      - type: RECEIVER_DISAGREEMENT
+        description: "Multiple receivers show conflicting positions"
+        weight: 0.85
+    countermeasures:
+      - SWITCH_TO_INERTIAL_NAV
+      - TERRAIN_CHECKPOINT_NAV
+      - REDUCE_SPEED
+      - VISUAL_REFERENCE_NAV
+
+  - id: T-07
+    name: "Cyber Incident on C2/Comms"
+    category: CYBER_INCIDENT
+    indicators:
+      - type: ANOMALOUS_NETWORK_TRAFFIC
+        description: "Unusual data volume or destination"
+        weight: 0.7
+      - type: AUTH_FAILURES
+        description: "Multiple authentication failures"
+        weight: 0.8
+      - type: DATA_INTEGRITY_VIOLATION
+        description: "Checksums/hashes failing on critical data"
+        weight: 0.9
+    planning_effects:
+      - ISOLATE_AFFECTED_SYSTEMS
+      - DOWNGRADE_TO_BACKUP_C2
+      - RESTRICT_INFORMATION_SHARING
+    countermeasures:
+      - BACKUP_COMMAND_NODE_ACTIVATION
+      - ALTERNATE_COMMS_TREE
+      - COURIER_FALLBACK
+
+  - id: T-08
+    name: "IED Threat"
+    category: IED
+    indicators:
+      - type: HUMINT
+        description: "HUMINT report of IED emplacement"
+        weight: 0.85
+      - type: PATTERN_OF_LIFE
+        description: "Anomalous pattern of life on route"
+        weight: 0.5
+      - type: ROUTE_USAGE_ANOMALY
+        description: "Locals avoiding road segment"
+        weight: 0.6
+    behaviour_model:
+      trigger_type: [PRESSURE, COMMAND_WIRE, RCIED, VICTIM_OPERATED]
+      placement_preference: CHOKEPOINTS
+    risk_formula: "historical_incident_density * route_usage_freq * intel_confidence"
+    countermeasures:
+      - ROUTE_DEVIATION
+      - MRAP_ASSIGNMENT
+      - EOD_PRE_CLEARANCE
+      - MINE_PROTECTED_VEHICLES
+
+  - id: T-09
+    name: "Ambush Risk"
+    category: AMBUSH
+    indicators:
+      - type: PATTERN_OF_LIFE_DEVIATION
+        description: "Unusual civilian absence from area"
+        weight: 0.6
+      - type: CHOKE_POINT_ANALYSIS
+        description: "Route passes through natural kill zone"
+        weight: 0.7
+    behaviour_model:
+      ambush_type: [LINEAR, L_SHAPE, V_SHAPE]
+      suitability_factors: [VEGETATION_COVER, ELEVATION_ADVANTAGE, ESCAPE_ROUTES]
+    countermeasures:
+      - AVOID_NATURAL_CHOKE_POINTS
+      - INCREASE_LEAD_ELEMENT_STANDOFF
+      - PRE_PLAN_FIRE_SUPPORT
+      - ALTERNATE_ROUTE
+
+  - id: T-10
+    name: "Extreme Weather"
+    category: EXTREME_WEATHER
+    indicators:
+      - type: WEATHER_FORECAST
+        description: "Met forecast for severe conditions"
+        weight: 0.9
+      - type: SENSOR_DATA
+        description: "Real-time sensor readings"
+        weight: 0.95
+    planning_effects:
+      - SUSPEND_HELICOPTER_OPS
+      - REDUCE_MOVEMENT_SPEED
+      - EXTEND_TIMELINE
+      - PRE_POSITION_SHELTER
+    seasonal_factors:
+      WINTER: 2.0
+      MONSOON: 1.5
+
+  - id: T-11
+    name: "Bridge Collapse / Route Denial"
+    category: ROUTE_DENIAL
+    indicators:
+      - type: ENGINEERING_REPORT
+        description: "Engineer assessment of bridge integrity"
+        weight: 0.95
+      - type: SATELLITE_IMAGERY
+        description: "Satellite imagery showing damage"
+        weight: 0.9
+    planning_effects:
+      - TRIGGER_ROUTE_REPLAN
+      - CHECK_ENGINEER_ASSETS
+      - ESTIMATE_TIMELINE_IMPACT
+    countermeasures:
+      - ALTERNATE_ROUTE
+      - BRIDGING_EQUIPMENT
+      - FORD_IDENTIFICATION
+
+  - id: T-12
+    name: "Hostage Situation"
+    category: HOSTAGE_SITUATION
+    key_constraint: "maximise P(hostage_survival); minimise collateral_damage"
+    behaviour_model:
+      terrorist_response: [REACTIVE, PRE_PLANNED]
+      building_type: [RESIDENTIAL, COMMERCIAL, GOVERNMENT]
+    simulation_variables:
+      hostage_count: {distribution: "discrete", values: [1, 2, 3, 5, 8]}
+      terrorist_count: {distribution: "discrete", values: [2, 3, 5, 8]}
+    countermeasures:
+      - SIMULTANEOUS_ENTRY
+      - SEQUENTIAL_ENTRY
+      - SNIPER_OVERWATCH
+      - NEGOTIATION_PARALLEL

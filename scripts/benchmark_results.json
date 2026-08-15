@@ -1,0 +1,32 @@
+{
+  "runs": 500,
+  "workers": 16,
+  "wall_time_s": 2.938,
+  "throughput_runs_per_s": 170.17,
+  "executor_type": "injected_factory",
+  "peak_heap_mb": 24.75,
+  "current_heap_mb": 24.7,
+  "statistics": {
+    "mission_success_rate": 0.898,
+    "objective_completion_rate": 0.976,
+    "expected_casualties": 0.104,
+    "casualty_stddev": 0.3121,
+    "time_p50_min": 300.0,
+    "time_p95_min": 300.0,
+    "fuel_mean": 0.2099,
+    "roe_violation_rate": 0.0,
+    "constraint_violation_rate": 0.034,
+    "failure_modes": {
+      "FRIENDLY_CASUALTY": 51,
+      "MISSION_TIMEOUT": 36,
+      "COMMUNICATION_DEGRADATION": 5
+    }
+  },
+  "rss_before_mb": 70.2,
+  "rss_after_mb": 116.3,
+  "rss_delta_mb": 46.2,
+  "cpu_pct_after": 99.8,
+  "system_cpu_pct": 12.7,
+  "system_ram_available_mb": 1444.0,
+  "system_ram_percent": 81.1
+}

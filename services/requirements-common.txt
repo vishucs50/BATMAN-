@@ -1,0 +1,24 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+pydantic-settings==2.2.1
+sqlalchemy==2.0.29
+asyncpg==0.29.0
+alembic==1.13.1
+geoalchemy2==0.15.1
+psycopg2-binary==2.9.9
+python-jose[cryptography]==3.3.0
+httpx==0.27.0
+redis==5.0.4
+kafka-python==2.0.2
+python-multipart==0.0.9
+structlog==24.1.0
+prometheus-fastapi-instrumentator==6.1.0
+# Phase 1 intelligence layer
+pgmpy==0.1.25
+faiss-cpu==1.8.0
+neo4j==5.20.0
+numpy==1.26.4
+# Phase 2 war-gaming engine
+simpy==4.1.1
+mesa==2.3.2

@@ -1,0 +1,111 @@
+# BATMAN Doctrine Templates — Phase 0 Seed Data
+# YAML format — loaded into Knowledge Graph on startup
+# Classification: UNCLASSIFIED — Academic/Research
+
+templates:
+
+  - id: TPL-CI-001
+    name: "Counter-Infiltration — Standard Cordon"
+    mission_type: COUNTER_INFILTRATION
+    terrain_applicability: [FORESTED, MOUNTAINOUS, RIVERINE]
+    phase_sequence:
+      - phase: 1
+        name: "Alert & Mobilization"
+        max_duration_min: 30
+        tasks:
+          - ALERT_QRT
+          - NOTIFY_HQ
+          - ACTIVATE_SENSOR_GRID
+      - phase: 2
+        name: "Cordon Establishment"
+        max_duration_min: 45
+        tasks:
+          - DEPLOY_BLOCKING_ELEMENTS
+          - SEAL_ESCAPE_ROUTES
+          - POSITION_OBSERVATION_POSTS
+      - phase: 3
+        name: "Search & Resolution"
+        tasks:
+          - SEARCH_GRID_SQUARES
+          - APPREHEND_OR_NEUTRALIZE
+          - ROE_GRADUATED_FORCE
+      - phase: 4
+        name: "Exfil & Reporting"
+        tasks:
+          - SECURE_AREA
+          - MEDEVAC_IF_REQUIRED
+          - SUBMIT_CONTACT_REPORT
+    default_constraints:
+      - category: FORCE_RATIO
+        predicate: "own_force.count >= 3 * threat.estimated_strength"
+      - category: CORDON_DEPTH_FOREST
+        predicate: "cordon.depth_m >= 500"
+      - category: ROE_GRADUATED
+        predicate: "force_application.graduated == true"
+
+  - id: TPL-CT-001
+    name: "Counter-Terrorism — Urban Assault"
+    mission_type: COUNTER_TERRORISM
+    terrain_applicability: [URBAN]
+    phase_sequence:
+      - phase: 1
+        name: "Intelligence & Planning"
+        tasks: [GATHER_FLOOR_PLAN, CONFIRM_HOSTAGE_POSITIONS, REHEARSE_BREACH]
+      - phase: 2
+        name: "Isolation"
+        tasks: [CORDON_BUILDING, EVACUATE_CIVILIANS, CUT_COMMS]
+      - phase: 3
+        name: "Assault"
+        tasks: [SIMULTANEOUS_BREACH, HOSTAGE_EXTRACTION, NEUTRALIZE_THREAT]
+      - phase: 4
+        name: "Consolidation"
+        tasks: [SECURE_SITE, MEDEVAC, EVIDENCE_COLLECTION, REPORT]
+    default_constraints:
+      - category: HOSTAGE_SAFETY
+        predicate: "P(hostage_survival) >= 0.85"
+      - category: COLLATERAL_DAMAGE
+        predicate: "P(civilian_casualty) <= 0.05"
+
+  - id: TPL-LOG-001
+    name: "High Altitude Logistics — Air & Ground Mix"
+    mission_type: HIGH_ALTITUDE_LOGISTICS
+    terrain_applicability: [HIGH_ALTITUDE]
+    phase_sequence:
+      - phase: 1
+        name: "Demand & Window Assessment"
+        tasks: [ASSESS_DEMAND, FORECAST_WEATHER_WINDOW, CHECK_AIRCRAFT_SERVICEABILITY]
+      - phase: 2
+        name: "Load Planning"
+        tasks: [COMPUTE_PAYLOAD_ALTITUDE_DEGRADATION, OPTIMIZE_LOAD_DISTRIBUTION]
+      - phase: 3
+        name: "Execution"
+        tasks: [FLY_SORTIES, GROUND_CONVOY, PORTER_COLUMN]
+      - phase: 4
+        name: "Confirmation"
+        tasks: [CONFIRM_RECEIPT, UPDATE_STOCKPILE_RECORDS]
+    default_constraints:
+      - category: ALH_ALTITUDE_CEILING
+        predicate: "mission.altitude_m <= 7000"
+      - category: WEATHER_MINIMUM
+        predicate: "weather.visibility_m >= 500 AND weather.wind_kmh <= 40"
+
+  - id: TPL-HADR-001
+    name: "HADR — Flood Relief"
+    mission_type: HADR
+    terrain_applicability: [PLAINS, RIVERINE, URBAN]
+    phase_sequence:
+      - phase: 1
+        name: "Reconnaissance"
+        tasks: [UAV_SURVEY, ASSESS_AFFECTED_POPULATION, MAP_INUNDATION]
+      - phase: 2
+        name: "Rescue"
+        tasks: [BOAT_DEPLOYMENT, HELICOPTER_RESCUE, EVACUATION_CORRIDORS]
+      - phase: 3
+        name: "Relief"
+        tasks: [SUPPLY_DROP, MEDICAL_CAMPS, WATER_PURIFICATION]
+      - phase: 4
+        name: "Recovery"
+        tasks: [ENGINEER_SUPPORT, ROAD_REPAIR, HANDOVER_TO_CIVIL]
+    default_constraints:
+      - category: LIVES_PRIORITY
+        predicate: "objective.type == RESCUE implies priority == 1"
