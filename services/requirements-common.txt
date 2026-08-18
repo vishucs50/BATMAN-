@@ -17,7 +17,7 @@ prometheus-fastapi-instrumentator==6.1.0
 # Phase 1 intelligence layer
 pgmpy==0.1.25
 faiss-cpu==1.8.0
-neo4j==5.20.0
+neo4j>=5.15.0
 numpy==1.26.4
 # Phase 2 war-gaming engine
 simpy==4.1.1

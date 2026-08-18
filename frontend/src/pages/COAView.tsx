@@ -1,60 +1,126 @@
-// COA Comparison View — Phase 0 skeleton (full AI in Phase 1)
-const coas = [
-  { num: 1, name: 'Bold Cordon', style: 'bold', success: 71, cas: '1.8 (σ=1.1)', time: '2.5h', risk: 'HIGH', topRisk: 'N-flank escape P=0.31', fuel: 85 },
-  { num: 2, name: 'Phased Block', style: 'balanced', success: 84, cas: '0.9 (σ=0.7)', time: '3.2h', risk: 'MEDIUM', topRisk: 'Timing delay P=0.18', fuel: 72, recommended: true },
-  { num: 3, name: 'Aerial First', style: 'cautious', success: 67, cas: '2.1 (σ=1.4)', time: '2.0h', risk: 'HIGH', topRisk: 'Weather window P=0.39', fuel: 90 },
-]
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState, AppDispatch } from '../store'
+import { fetchMissionCOAs, generateCOAs, approveCOA, simulateCOA } from '../store/slices/missionsSlice'
+
 export default function COAView() {
+  const dispatch = useDispatch<AppDispatch>()
+  const missions = useSelector((state: RootState) => state.missions.list)
+  const coas = useSelector((state: RootState) => state.missions.coas)
+  const activeMission = missions.length > 0 ? missions[0] : null
+  const [selectedCoaId, setSelectedCoaId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (activeMission) {
+      dispatch(fetchMissionCOAs(activeMission.id))
+    }
+  }, [dispatch, activeMission])
+
+  const handleGenerate = () => {
+    if (activeMission) {
+      dispatch(generateCOAs(activeMission.id))
+    }
+  }
+
+  const handleSimulate = (coaId: string) => {
+    if (activeMission) {
+      dispatch(simulateCOA({ missionId: activeMission.id, coaId }))
+    }
+  }
+
+  const handleApprove = () => {
+    if (activeMission && selectedCoaId) {
+      dispatch(approveCOA({ missionId: activeMission.id, coaId: selectedCoaId }))
+    }
+  }
+
+  const selectedCoa = coas.find(c => c.id === selectedCoaId)
+
   return (
     <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', height: '100%', overflow: 'auto' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <h2>Course of Action Comparison</h2>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Mission: CI-KARGIL-2026-0815 • 500 Monte Carlo runs per COA</p>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            Mission: {activeMission?.mission_code || 'None'} • {coas.length} COAs generated
+          </p>
         </div>
-        <button className="btn btn--primary" id="btn-generate-new-coas">Generate New COAs</button>
+        <button className="btn btn--primary" id="btn-generate-new-coas" onClick={handleGenerate}>
+          Generate New COAs
+        </button>
       </div>
+      
       <div className="grid-3">
-        {coas.map(c => (
-          <div key={c.num} className={`coa-card coa-card--${c.style} ${c.recommended ? 'coa-card--selected' : ''}`} id={`coa-card-${c.num}`}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3>COA-{c.num}: "{c.name}"</h3>
-              {c.recommended && <span className="badge badge--amber">★ RECOMMENDED</span>}
-            </div>
-            <div className="divider" />
-            {[['Success Rate', `${c.success}%`], ['Exp. Casualties', c.cas], ['Timeline', c.time], ['Fuel Used', `${c.fuel}%`]].map(([k, v]) => (
-              <div key={k as string} className="coa-metric">
-                <span>{k as string}</span>
-                <span className="coa-metric-value">{v as string}</span>
+        {coas.length === 0 ? (
+          <div style={{ padding: '20px', color: 'var(--text-muted)' }}>No COAs generated yet. Click generate.</div>
+        ) : coas.map(c => {
+          const isSelected = c.id === selectedCoaId
+          const isApproved = c.status === 'APPROVED'
+          return (
+            <div key={c.id} className={`coa-card coa-card--${c.style?.toLowerCase() || 'balanced'} ${isSelected ? 'coa-card--selected' : ''}`} id={`coa-card-${c.coa_number}`}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3>COA-{c.coa_number}: "{c.name}"</h3>
+                {isApproved && <span className="badge badge--green">APPROVED</span>}
               </div>
-            ))}
-            <div className="divider" />
-            <div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '4px' }}>TOP RISK</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--color-danger)' }}>{c.topRisk}</div>
+              <div className="divider" />
+              <div className="coa-metric">
+                <span>Utility Score</span>
+                <span className="coa-metric-value">{c.utility_score?.toFixed(2) || 'N/A'}</span>
+              </div>
+              <div className="coa-metric">
+                <span>Status</span>
+                <span className="coa-metric-value">{c.status}</span>
+              </div>
+              <div className="divider" />
+              <div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '4px' }}>EXPLANATION</div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                  {c.explanation?.decision || 'Detailed explanation not available.'}
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '6px', marginTop: '12px' }}>
+                <button className="btn btn--secondary btn--sm" style={{ flex: 1 }} onClick={() => handleSimulate(c.id)}>
+                  SIMULATE
+                </button>
+                <button className={`btn btn--sm ${isSelected ? 'btn--primary' : 'btn--secondary'}`} style={{ flex: 1 }} onClick={() => setSelectedCoaId(c.id)}>
+                  {isSelected ? 'SELECTED ★' : 'SELECT'}
+                </button>
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
-              <button className="btn btn--secondary btn--sm" style={{ flex: 1 }} id={`btn-simulate-coa${c.num}`}>SIMULATE</button>
-              <button className={`btn btn--sm ${c.recommended ? 'btn--primary' : 'btn--secondary'}`} style={{ flex: 1 }} id={`btn-select-coa${c.num}`}>
-                {c.recommended ? 'SELECT ★' : 'SELECT'}
-              </button>
+          )
+        })}
+      </div>
+
+      <div className="panel">
+        <h4 style={{ marginBottom: '8px' }}>AI REASONING — {selectedCoa ? `Why COA-${selectedCoa.coa_number} is selected` : 'Select a COA to view reasoning'}</h4>
+        {selectedCoa ? (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            <div><strong style={{ color: 'var(--text-primary)' }}>Utility:</strong> {selectedCoa.utility_score?.toFixed(4)}<br/><strong style={{ color: 'var(--text-primary)' }}>Style:</strong> {selectedCoa.style}</div>
+            <div>
+              <strong style={{ color: 'var(--text-primary)' }}>Primary Reasons:</strong>
+              <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                {selectedCoa.explanation?.primary_reasons?.map((r: string, i: number) => <li key={i}>{r}</li>)}
+              </ul>
+            </div>
+            <div>
+              <strong style={{ color: 'var(--text-primary)' }}>Rule Firings & CBR:</strong>
+              <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                {selectedCoa.explanation?.rule_firings?.map((r: string, i: number) => <li key={`rule-${i}`}>{r}</li>)}
+                {selectedCoa.explanation?.cbr_matches?.map((r: string, i: number) => <li key={`cbr-${i}`}>{r}</li>)}
+              </ul>
             </div>
           </div>
-        ))}
-      </div>
-      <div className="panel">
-        <h4 style={{ marginBottom: '8px' }}>AI REASONING — Why COA-2 is recommended</h4>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-          <div><strong style={{ color: 'var(--text-primary)' }}>Primary:</strong> Highest success rate (84%) across 500 simulation runs</div>
-          <div><strong style={{ color: 'var(--text-primary)' }}>Trade-off:</strong> 42 min longer than COA-1 (acceptable for reduced casualty risk)</div>
-          <div><strong style={{ color: 'var(--text-primary)' }}>Precedent:</strong> Similar to CI-BARAMULLA-2024 [OUTCOME: SUCCESS]</div>
-        </div>
+        ) : (
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No selection made.</div>
+        )}
         <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-          <button className="btn btn--secondary btn--sm" id="btn-expand-reasoning">Expand Reasoning</button>
-          <button className="btn btn--secondary btn--sm" id="btn-show-simulation">Show Simulation</button>
-          <button className="btn btn--secondary btn--sm" id="btn-adjust-weights">Adjust Weights</button>
+          <button className="btn btn--secondary btn--sm" id="btn-expand-reasoning" disabled={!selectedCoa}>Expand Reasoning</button>
+          <button className="btn btn--secondary btn--sm" id="btn-show-simulation" disabled={!selectedCoa}>Show Simulation</button>
+          <button className="btn btn--secondary btn--sm" id="btn-adjust-weights" disabled={!selectedCoa}>Adjust Weights</button>
           <div style={{ flex: 1 }} />
-          <button className="btn btn--primary" id="btn-approve-coa2">APPROVE COA-2</button>
+          <button className="btn btn--primary" id="btn-approve-coa" disabled={!selectedCoa} onClick={handleApprove}>
+            APPROVE COA-{selectedCoa?.coa_number || ''}
+          </button>
         </div>
       </div>
     </div>

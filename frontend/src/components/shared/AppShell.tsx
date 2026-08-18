@@ -1,13 +1,12 @@
 import { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../../store/hooks'
 
 // Icons as inline SVG components (no external icon lib needed)
 const IconMap      = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/></svg>
 const IconShield   = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
 const IconSim      = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
 const IconPackage  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-const IconBat      = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+const IconHistory  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
 
 interface AppShellProps {
   children: ReactNode
@@ -89,6 +88,9 @@ export default function AppShell({ children }: AppShellProps) {
           </NavLink>
           <NavLink to="/logistics" className={({ isActive }) => `nav-item ${isActive ? 'nav-item--active' : ''}`} id="nav-logistics">
             <IconPackage /> Logistics
+          </NavLink>
+          <NavLink to="/history" className={({ isActive }) => `nav-item ${isActive ? 'nav-item--active' : ''}`} id="nav-history">
+            <IconHistory /> AAR & History
           </NavLink>
         </nav>
 
