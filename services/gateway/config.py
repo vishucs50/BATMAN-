@@ -2,7 +2,7 @@
 Gateway Settings — loaded from environment variables.
 """
 from pydantic_settings import BaseSettings
-from typing import list
+
 
 
 class Settings(BaseSettings):
@@ -31,14 +31,14 @@ class Settings(BaseSettings):
     TRUSTED_HOSTS: list[str] = ["localhost", "127.0.0.1", "batman-gateway"]
 
     # Service URLs (internal)
-    MISSION_SVC_URL: str = "http://batman-mission-svc:8001"
-    PLANNING_SVC_URL: str = "http://batman-planning-svc:8002"
-    WARGAME_SVC_URL: str = "http://batman-wargame-svc:8003"
-    THREAT_SVC_URL: str = "http://batman-threat-svc:8004"
-    LOGISTICS_SVC_URL: str = "http://batman-logistics-svc:8005"
-    KG_SVC_URL: str = "http://batman-kg-svc:8006"
-    GIS_SVC_URL: str = "http://batman-gis-svc:8007"
-    AUDIT_SVC_URL: str = "http://batman-audit-svc:8011"
+    MISSION_SVC_URL: str = "http://127.0.0.1:8001"
+    PLANNING_SVC_URL: str = "http://127.0.0.1:8002"
+    WARGAME_SVC_URL: str = "http://127.0.0.1:8003"
+    THREAT_SVC_URL: str = "http://127.0.0.1:8004"
+    LOGISTICS_SVC_URL: str = "http://127.0.0.1:8005"
+    KG_SVC_URL: str = "http://127.0.0.1:8006"
+    GIS_SVC_URL: str = "http://127.0.0.1:8007"
+    AUDIT_SVC_URL: str = "http://127.0.0.1:8011"
 
     class Config:
         env_file = ".env"

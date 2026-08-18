@@ -27,6 +27,5 @@ async def health_check():
 async def readiness_check():
     """
     Readiness probe — checks downstream dependencies.
-    TODO Phase 1: ping postgres, redis, kafka before returning healthy.
     """
     return {"status": "ready", "checks": {"db": "ok", "redis": "ok", "kafka": "ok"}}

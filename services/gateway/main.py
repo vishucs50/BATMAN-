@@ -17,7 +17,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 from .config import Settings
 from .middleware.auth import verify_jwt_token, TokenData
-from .routers import missions, coa, simulation, threats, gis, audit, health
+from .routers import missions, coa, simulation, threats, gis, kg, audit, health, alerts, aar
 
 logger = structlog.get_logger(__name__)
 settings = Settings()
@@ -89,7 +89,10 @@ app.include_router(coa.router,         prefix=API_PREFIX, tags=["Courses of Acti
 app.include_router(simulation.router,  prefix=API_PREFIX, tags=["War Gaming"])
 app.include_router(threats.router,     prefix=API_PREFIX, tags=["Threat Assessment"])
 app.include_router(gis.router,         prefix=API_PREFIX, tags=["GIS / Terrain"])
+app.include_router(kg.router,          prefix=API_PREFIX, tags=["Knowledge Graph"])
 app.include_router(audit.router,       prefix=API_PREFIX, tags=["Audit"])
+app.include_router(alerts.router,      prefix=API_PREFIX, tags=["WebSockets"])
+app.include_router(aar.router,         prefix=API_PREFIX, tags=["After Action Review"])
 
 
 # ── EXCEPTION HANDLERS ────────────────────────────────────────────────────────

@@ -1,0 +1,37 @@
+active_heuristics: null
+active_model: null
+dataset_version: null
+feature_version: null
+history:
+- dataset_size: 0
+  heuristics_version: heuristics_v1_1786991121.json
+  model_version: N/A
+  status: FAILED_REVIEW
+  test_mse: 999.0
+  timestamp: '2026-08-17T23:55:21Z'
+- dataset_size: 36
+  heuristics_version: heuristics_v1_1786991185.json
+  model_version: gnn_v1_1786991185.pth
+  status: FAILED_REVIEW
+  test_mse: 16719.392578125
+  timestamp: '2026-08-17T23:56:25Z'
+- dataset_size: 18
+  heuristics_version: heuristics_v1_1786991249.json
+  model_version: gnn_v1_1786991249.pth
+  status: FAILED_REVIEW
+  test_mse: 17759.787109375
+  timestamp: '2026-08-17T23:57:29Z'
+- dataset_size: 18
+  heuristics_version: heuristics_v1_1786991294.json
+  model_version: gnn_v1_1786991294.pth
+  status: FAILED_REVIEW
+  test_mse: 17809.612630208332
+  timestamp: '2026-08-17T23:58:14Z'
+- dataset_size: 18
+  heuristics_version: heuristics_v1_1786991349.json
+  model_version: gnn_v1_1786991349.pth
+  status: FAILED_REVIEW
+  test_mse: 1444247.4583333333
+  timestamp: '2026-08-17T23:59:09Z'
+last_evaluation_metrics: {}
+model_version: 1.0.0

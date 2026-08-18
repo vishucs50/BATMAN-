@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 """
 Mission Service — BATMAN
 ========================
@@ -26,6 +30,33 @@ AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("mission-svc starting")
+    
+    # Auto-seed database if empty
+    import json
+    async with AsyncSessionLocal() as session:
+        try:
+            result = await session.execute(text("SELECT COUNT(*) FROM missions"))
+            count = result.scalar()
+            if count == 0:
+                logger.info("No missions found. Seeding default mission OP-RED-DAWN...")
+                await session.execute(
+                    text("""
+                        INSERT INTO missions (mission_code, mission_type, classification, mission_params, roe_profile)
+                        VALUES (:code, :mtype, :classification, CAST(:params AS jsonb), CAST(:roe AS jsonb))
+                    """),
+                    {
+                        "code": "OP-RED-DAWN",
+                        "mtype": "COUNTER_INFILTRATION",
+                        "classification": "SECRET",
+                        "params": json.dumps({"target": "Hanupatta", "threat_level": "HIGH"}),
+                        "roe": json.dumps({"use_of_force": "RETURN_FIRE_ONLY", "civilian_preservation": "STRICT"})
+                    }
+                )
+                await session.commit()
+                logger.info("Database successfully seeded.")
+        except Exception as e:
+            logger.error("Failed to seed database", error=str(e))
+            
     yield
     logger.info("mission-svc shutting down")
     await engine.dispose()
@@ -82,6 +113,17 @@ class ObjectiveCreate(BaseModel):
     priority: int = Field(..., ge=1, le=5)
     description: Optional[str] = None
     deadline: Optional[datetime] = None
+    target_location: Optional[str] = None
+
+
+class ObjectiveOut(BaseModel):
+    id: uuid.UUID
+    mission_id: uuid.UUID
+    obj_type: str
+    priority: int
+    status: str
+    description: Optional[str]
+    deadline: Optional[datetime]
 
 
 # ── ENDPOINTS ─────────────────────────────────────────────────────────────────
@@ -100,7 +142,7 @@ async def create_mission(payload: MissionCreate, db: AsyncSession = Depends(get_
     result = await db.execute(
         text("""
             INSERT INTO missions (mission_code, mission_type, classification, mission_params, roe_profile)
-            VALUES (:code, :mtype, :classification, :params::jsonb, :roe::jsonb)
+            VALUES (:code, :mtype, :classification, CAST(:params AS jsonb), CAST(:roe AS jsonb))
             RETURNING id, mission_code, mission_type, status, classification, created_at, updated_at
         """),
         {
@@ -184,3 +226,64 @@ async def mission_status(mission_id: uuid.UUID, db: AsyncSession = Depends(get_d
         "alerts": [],
         "note": "Full status available in Phase 1",
     }
+
+
+@app.post("/missions/{mission_id}/objectives", status_code=201)
+async def create_objective(
+    mission_id: uuid.UUID,
+    payload: ObjectiveCreate,
+    db: AsyncSession = Depends(get_db)
+):
+    import json
+    result = await db.execute(
+        text("""
+            INSERT INTO objectives (mission_id, obj_type, priority, description, deadline, target_location)
+            VALUES (:mission_id, :obj_type, :priority, :description, :deadline, 
+                CASE WHEN :target_location IS NOT NULL THEN ST_GeomFromText(:target_location, 4326) ELSE NULL END)
+            RETURNING id, mission_id, obj_type, priority, status, description, deadline
+        """),
+        {
+            "mission_id": str(mission_id),
+            "obj_type": payload.obj_type,
+            "priority": payload.priority,
+            "description": payload.description,
+            "deadline": payload.deadline,
+            "target_location": payload.target_location
+        }
+    )
+    await db.commit()
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(404, "Mission not found or error creating objective")
+    return dict(row._mapping)
+
+
+@app.get("/missions/{mission_id}/objectives")
+async def list_objectives(mission_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        text("""
+            SELECT id, mission_id, obj_type, priority, status, description, deadline 
+            FROM objectives 
+            WHERE mission_id = :mission_id 
+            ORDER BY priority ASC, id ASC
+        """),
+        {"mission_id": str(mission_id)}
+    )
+    rows = result.fetchall()
+    return [dict(r._mapping) for r in rows]
+
+
+@app.get("/objectives/{objective_id}")
+async def get_objective(objective_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        text("""
+            SELECT id, mission_id, obj_type, priority, status, description, deadline 
+            FROM objectives 
+            WHERE id = :objective_id
+        """),
+        {"objective_id": str(objective_id)}
+    )
+    row = result.fetchone()
+    if not row:
+        raise HTTPException(404, "Objective not found")
+    return dict(row._mapping)

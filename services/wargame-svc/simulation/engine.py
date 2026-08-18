@@ -219,8 +219,8 @@ class BATMANSimulation:
         self.friendly_agents: list[FriendlyAgent] = []
         self.threat_agents:   list[ThreatAgent] = []
         self.civilian_agents: list[CivilianAgent] = []
-        self.environment_agent = EnvironmentAgent("environment")
-        self.judge_agent = JudgeAgent()
+        self.environment_agent = EnvironmentAgent("environment", model=self.mesa_model)
+        self.judge_agent = JudgeAgent(model=self.mesa_model)
 
         self._build_agents()
         self._assign_coa_tasks()
